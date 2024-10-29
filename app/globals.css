@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    --sky: #85deff;
+    --skyLight: #C3EBFA;
+    --purple: #a8a7fe;
+    --purpleLight: #CFCEFF;
+    --yellow: #fdee58;
+    --yellowLight: #FAE27C;
+}
+
+.react-calendar {
+    width: 100% !important;
+    border: none !important;
+    font-family: 'Inter', sans-serif !important;
+}
+
+.react-calendar__navigation__label__labelText {
+    font-weight: 600 !important;
+}
+
+.react-calendar__tile--now {
+    background-color: lightgray !important;
+    color: black !important;
+}
+
+.react-calendar__tile--active {
+    background-color: var(--yellow) !important;
+    color: black !important;
+}
