@@ -15,12 +15,12 @@ export default function dashboardLayout({
         <Link href="/" 
         className="flex items-center justify-center lg:justify-start gap-2">
           <Image src="/logo.png" alt="Logo" width={32} height={32} />
-          <span className="hidden lg:block">School Man.</span>
+          <span className="hidden lg:block font-bold">School Man.</span>
         </Link>
         <Menu />
       </div>
       {/* Right */}
-      <div className="w-full bg-[#F7F8FA]">
+      <div className="w-full bg-[#F7F8FA] flex flex-col">
         <Navbar />
         {children}
       </div>

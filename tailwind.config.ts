@@ -16,7 +16,7 @@ const config: Config = {
         purple: "#a8a7fe",
         purpleLight: "#CFCEFF",
         yellow: "#fdee58",
-        yellowLight: "#FAE27C",
+        yellowLight: "#fff583",
       },
     },
   },

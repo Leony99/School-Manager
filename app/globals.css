@@ -8,7 +8,7 @@
     --purple: #a8a7fe;
     --purpleLight: #CFCEFF;
     --yellow: #fdee58;
-    --yellowLight: #FAE27C;
+    --yellowLight: #fff583;
 }
 
 .react-calendar {
@@ -29,4 +29,119 @@
 .react-calendar__tile--active {
     background-color: var(--yellow) !important;
     color: black !important;
+}
+
+.rbc-btn-group:first-child {
+    display: none !important;
+}
+
+.rbc-toolbar-label {
+    text-align: right !important;
+    padding: 0px 20px !important;
+}
+
+.rbc-btn-group:last-child {
+    font-size: 13px !important;
+}
+
+.rbc-btn-group:last-child button {
+    border: none !important;
+    background-color: var(--yellowLight) !important;
+    margin-left: 2px !important;
+}
+
+.rbc-toolbar button.rbc-active {
+    background-color: var(--yellowLight) !important;
+    box-shadow: none !important;
+}
+
+.rbc-time-view {
+    border-color: #eee !important;
+}
+
+.rbc-time-header {
+    background-color: #f7fdff !important;
+}
+
+.rbc-label.rbc-time-header-gutter{
+    border-bottom: 1px solid rgb(229, 231, 235) !important;
+}
+
+.rbc-allday-cell{
+    display: none !important;
+}
+
+.rbc-time-content {
+    border: none !important;
+}
+
+.rbc-time-gutter.rbc-time-column {
+    font-size: 12px !important;
+}
+
+.rbc-time-gutter.rbc-time-column .rbc-timeslot-group {
+    padding: 0px 20px !important;
+}
+
+.rbc-events-container {
+    margin: 0px !important;
+}
+
+.rbc-timeslot-group {
+    background-color: #f7fdff !important;
+    min-height: 80px !important;
+}
+
+.rbc-day-slot {
+    font-size: 14px !important;
+}
+
+.rbc-event {
+    border: none !important;
+    color: black !important;
+    padding: 10px !important;
+    width: 100% !important;
+    min-height: 79px !important;
+    height: calc(11.111111% - 1px) !important;
+    /*The height depends of the number of hours in the calendar:
+    
+    The events are divided by % of the height of the 'events container' in calendar
+    
+    if 9 hours in y axis = 100% / 9 = 11.1111%:
+    first event = 0% top,
+    second event = 11.1111% top
+    third event = 22.2222% top...
+    
+    then height of the event = 11.1111% - 1px (1px for the border)
+    */
+}
+
+.rbc-event:nth-child(1) {
+    background-color: #e2f8ff !important;
+}
+.rbc-event:nth-child(2) {
+    background-color: #fefce8 !important;
+}
+.rbc-event:nth-child(3) {
+    background-color: #f2f1ff !important;
+}
+.rbc-event:nth-child(4) {
+    background-color: #fdf2fb !important;
+}
+.rbc-event:nth-child(5) {
+    background-color: #e2f8ff !important;
+}
+.rbc-event:nth-child(6) {
+    background-color: #fefce8 !important;
+}
+.rbc-event:nth-child(7) {
+    background-color: #f2f1ff !important;
+}
+.rbc-event:nth-child(8) {
+    background-color: #fdf2fb !important;
+}
+
+.rbc-event-label{
+    color: gray !important;
+    margin-bottom: 5px;
 }
