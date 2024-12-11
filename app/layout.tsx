@@ -2,8 +2,10 @@
 
 import { usePathname, redirect } from 'next/navigation';
 import Head from 'next/head';
-import { Inter } from "next/font/google";
+import { ClerkProvider } from '@clerk/nextjs';
 import { role } from '@/lib/data';
+import { Inter } from "next/font/google";
+
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -13,30 +15,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const pathname = usePathname();
-
-  if (pathname === '/') {
-    switch (role) {
-      case 'admin':
-        redirect('/admin');
-      case 'parent':
-        redirect('/parent');
-      case 'student':
-        redirect('/student');
-      case 'teacher':
-        redirect('/teacher');
-      default:
-        redirect('/login');
-    }
-  }
-
   return (
-    <html lang="en">
-      <Head>
-        <title>School Manager</title>
-        <meta name="description" content="Next.js School Management System" />
-      </Head>
-      <body className={inter.className}>{children}</body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <Head>
+          <title>School Manager</title>
+          <meta name="description" content="Next.js School Management System" />
+        </Head>
+        <body className={inter.className}>{children}</body>
+      </html>
+    </ClerkProvider>
   );
 }
