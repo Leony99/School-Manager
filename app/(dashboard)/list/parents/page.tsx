@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { role } from "@/lib/data";
+import { currentUserId, role } from "@/lib/utils";
 import prisma from "@/lib/prisma";
 import { Prisma, Parent, Student } from "@prisma/client";
 
@@ -36,7 +36,7 @@ const columns = [
     {
         header: "Actions",
         accessor: "action",
-        className: role === "admin" ? "" : "hidden",
+        className: (role === "admin" || role === "teacher") ? "" : "hidden",
     },
 ];
 
@@ -58,7 +58,7 @@ const renderRow = (item: ParentType) => (
         <td className="hidden text-center xl:table-cell">{item.address}</td>
         <td>
             <div className="flex items-center justify-center gap-2">
-                {role === "admin" && (
+                {(role === "admin" || role === "teacher") && (
                     <>
                         <FormModal table="parent" type="update" data={item} />
                         <FormModal table="parent" type="delete" id={item.id} />
@@ -73,8 +73,10 @@ const ParentListPage = async ({ searchParams }: { searchParams: Record<string, s
     const resolvedSearchParams = await searchParams;
     const page = resolvedSearchParams?.page ? parseInt(resolvedSearchParams.page) : 1;
 
-    //Search Params condition
+    //QUERY
     const query: Prisma.ParentWhereInput = {};
+
+    //Search Params condition
     if (Object.keys(resolvedSearchParams).length > 0) {
         for (const [key, value] of Object.entries(resolvedSearchParams)) {
             if (value !== undefined) {
@@ -107,6 +109,24 @@ const ParentListPage = async ({ searchParams }: { searchParams: Record<string, s
         }
     }
 
+    //Role conditions
+    switch (role) {
+        case "admin":
+            break;
+        case "teacher":
+            query.students = {
+                some: {
+                    class: {
+                        supervisorId: currentUserId!
+                    }
+                }
+            }
+            break;
+        default:
+            break;
+    }
+
+    //DATA
     const data = await prisma.parent.findMany({
         where: query,
         include: {
@@ -134,7 +154,7 @@ const ParentListPage = async ({ searchParams }: { searchParams: Record<string, s
                         <button className="w-8 h-8 flex items-center justify-center rounded-full bg-sky">
                             <Image src="/sort.png" alt="" width={14} height={14} />
                         </button>
-                        {role === "admin" && (
+                        {(role === "admin" || role === "teacher") && (
                             <FormModal table="parent" type="create" />
                         )}
                     </div>

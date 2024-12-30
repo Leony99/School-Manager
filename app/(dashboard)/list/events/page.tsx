@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { role } from "@/lib/data";
+import { currentUserId, role } from "@/lib/utils";
 import prisma from "@/lib/prisma";
 import { Prisma, Event, Class } from "@prisma/client";
 
@@ -13,10 +13,10 @@ import FormModal from "@/components/lists/FormModal";
 type EventType = Event & { class: Class };
 
 const columns = [
-    {   
-        header: "Title", 
-        accessor: "title", 
-        className: "text-left pl-4" 
+    {
+        header: "Title",
+        accessor: "title",
+        className: "text-left pl-4"
     },
     {
         header: "Class",
@@ -54,12 +54,14 @@ const renderRow = (item: EventType) => (
         <td className="hidden text-center sm:table-cell">{item.class?.name || "N/A"}</td>
         <td className="hidden text-center md:table-cell">{new Intl.DateTimeFormat('en-US').format(item.startTime)}</td>
         <td className="hidden text-center lg:table-cell">{new Intl.DateTimeFormat('en-US', {
-            hour: '2-digit', 
+            hour: '2-digit',
             minute: '2-digit',
+            timeZone: 'UTC',
         }).format(item.startTime)}</td>
         <td className="hidden text-center xl:table-cell">{new Intl.DateTimeFormat('en-US', {
-            hour: '2-digit', 
+            hour: '2-digit',
             minute: '2-digit',
+            timeZone: 'UTC',
         }).format(item.endTime)}</td>
         <td>
             <div className="flex items-center justify-center gap-2">
@@ -78,8 +80,10 @@ const EventListPage = async ({ searchParams }: { searchParams: Record<string, st
     const resolvedSearchParams = await searchParams;
     const page = resolvedSearchParams?.page ? parseInt(resolvedSearchParams.page) : 1;
 
-    //Search Params condition
+    //QUERY
     const query: Prisma.EventWhereInput = {};
+
+    //Search Params condition
     if (Object.keys(resolvedSearchParams).length > 0) {
         for (const [key, value] of Object.entries(resolvedSearchParams)) {
             if (value !== undefined) {
@@ -101,6 +105,36 @@ const EventListPage = async ({ searchParams }: { searchParams: Record<string, st
         }
     }
 
+    //Role conditions
+    switch (role) {
+        case "admin":
+            break;
+        case "teacher":
+            query.class = {
+                supervisorId: currentUserId!
+            };
+            break;
+        case "student":
+            query.class = {
+                students: {
+                    some: {
+                        id: currentUserId!
+                    }
+                }
+            }
+        case "parent":
+            query.class = {
+                students: {
+                    some: {
+                        parentId: currentUserId!
+                    }
+                }
+            }
+        default:
+            break;
+    }
+
+    //DATA
     const data = await prisma.event.findMany({
         where: query,
         include: {

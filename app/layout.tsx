@@ -1,12 +1,12 @@
 'use client'
 
-import { usePathname, redirect } from 'next/navigation';
 import Head from 'next/head';
-import { ClerkProvider } from '@clerk/nextjs';
-import { role } from '@/lib/data';
 import { Inter } from "next/font/google";
+import { ClerkProvider } from '@clerk/nextjs';
+import { ToastContainer } from "react-toastify";
 
 import "./globals.css";
+import "react-toastify/dist/ReactToastify.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,7 +22,10 @@ export default function RootLayout({
           <title>School Manager</title>
           <meta name="description" content="Next.js School Management System" />
         </Head>
-        <body className={inter.className}>{children}</body>
+        <body className={inter.className}>
+          {children}
+          <ToastContainer position="bottom-right" theme="dark" />
+        </body>
       </html>
     </ClerkProvider>
   );

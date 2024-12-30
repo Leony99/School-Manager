@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { role } from "@/lib/data";
+import { currentUserId, role } from "@/lib/utils";
 import prisma from "@/lib/prisma";
 import { Prisma, Class, Grade, Teacher } from "@prisma/client";
 
@@ -68,8 +68,10 @@ const ClassListPage = async ({ searchParams }: { searchParams: Record<string, st
     const resolvedSearchParams = await searchParams;
     const page = resolvedSearchParams?.page ? parseInt(resolvedSearchParams.page) : 1;
 
-    //Search Params condition
+    //QUERIES
     const query: Prisma.ClassWhereInput = {};
+
+    //Search params conditions
     if (Object.keys(resolvedSearchParams).length > 0) {
         for (const [key, value] of Object.entries(resolvedSearchParams)) {
             if (value !== undefined) {
@@ -88,8 +90,8 @@ const ClassListPage = async ({ searchParams }: { searchParams: Record<string, st
                                     { supervisor: { name: { contains: term, mode: "insensitive" } } },
                                     { supervisor: { surname: { contains: term, mode: "insensitive" } } },
                                     ...(isNumber
-                                        ? [ { grade: { level: { equals: Number(term) } } }, 
-                                            { capacity: { equals: Number(term) } },]
+                                        ? [{ grade: { level: { equals: Number(term) } } },
+                                        { capacity: { equals: Number(term) } },]
                                         : []),
                                 ]
                             };
@@ -102,6 +104,18 @@ const ClassListPage = async ({ searchParams }: { searchParams: Record<string, st
         }
     }
 
+    //Role conditions
+    switch (role) {
+        case "admin":
+            break;
+        case "teacher":
+            query.supervisorId = currentUserId!;
+            break;
+        default:
+            break;
+    }
+
+    //DATA
     const data = await prisma.class.findMany({
         where: query,
         include: {
@@ -139,7 +153,7 @@ const ClassListPage = async ({ searchParams }: { searchParams: Record<string, st
             <Table columns={columns} renderRow={renderRow} data={data} />
 
             {/* PAGINATION */}
-            <Pagination page={page} count={count}/>
+            <Pagination page={page} count={count} />
         </div>
     );
 };

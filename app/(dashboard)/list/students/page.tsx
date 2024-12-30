@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { role } from "@/lib/data";
+import { currentUserId, role } from "@/lib/utils";
 import prisma from "@/lib/prisma";
 import { Prisma, Student, Class, Grade } from "@prisma/client";
 
@@ -37,6 +37,7 @@ const columns = [
     {
         header: "Actions",
         accessor: "action",
+        className: role === "admin" ? "" : "hidden",
     },
 ];
 
@@ -83,8 +84,10 @@ const StudentListPage = async ({ searchParams }: { searchParams: Record<string, 
     const resolvedSearchParams = await searchParams;
     const page = resolvedSearchParams?.page ? parseInt(resolvedSearchParams.page) : 1;
 
-    //Search Params condition
+    //QUERY
     const query: Prisma.StudentWhereInput = {};
+
+    //Search Params condition
     if (Object.keys(resolvedSearchParams).length > 0) {
         for (const [key, value] of Object.entries(resolvedSearchParams)) {
             if (value !== undefined) {
@@ -124,6 +127,20 @@ const StudentListPage = async ({ searchParams }: { searchParams: Record<string, 
         }
     }
 
+    //Role conditions
+    switch (role) {
+        case "admin":
+            break;
+        case "teacher":
+            query.class = {
+                supervisorId: currentUserId!
+            }
+            break;
+        default:
+            break;
+    }  
+
+    //DATA
     const data = await prisma.student.findMany({
         where: query,
         include: {

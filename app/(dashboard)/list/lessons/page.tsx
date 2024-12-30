@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { role } from "@/lib/data";
+import { currentUserId, role } from "@/lib/utils";
 import prisma from "@/lib/prisma";
 import { Prisma, Lesson, Subject, Class, Teacher } from "@prisma/client";
 
@@ -30,7 +30,7 @@ const columns = [
     {
         header: "Actions",
         accessor: "action",
-        className: role === "admin" ? "" : "hidden",
+        className: (role === "admin" || role === "teacher") ? "" : "hidden",
     },
 ];
 
@@ -44,7 +44,7 @@ const renderRow = (item: LessonType) => (
         <td className="hidden text-center md:table-cell">{item.teacher.name} {item.teacher.surname}</td>
         <td>
             <div className="flex items-center justify-center gap-2">
-                {role === "admin" && (
+                {(role === "admin" || role === "teacher") && (
                     <>
                         <FormModal table="lesson" type="update" data={item} />
                         <FormModal table="lesson" type="delete" id={item.id} />
@@ -58,9 +58,11 @@ const renderRow = (item: LessonType) => (
 const LessonListPage = async ({ searchParams }: { searchParams: Record<string, string> }) => {
     const resolvedSearchParams = await searchParams;
     const page = resolvedSearchParams?.page ? parseInt(resolvedSearchParams.page) : 1;
-
-    //Search Params condition
+    
+    //QUERY
     const query: Prisma.LessonWhereInput = {};
+    
+    //Search Params condition
     if (Object.keys(resolvedSearchParams).length > 0) {
         for (const [key, value] of Object.entries(resolvedSearchParams)) {
             if (value !== undefined) {
@@ -93,6 +95,34 @@ const LessonListPage = async ({ searchParams }: { searchParams: Record<string, s
         }
     }
 
+    //Role conditions
+    switch (role) {
+        case "admin":
+            break;
+        case "teacher":
+            query.teacherId = currentUserId!;
+            break;
+        case "student":
+            query.class = {
+                students: {
+                    some: {
+                        id: currentUserId!
+                    }
+                }
+            }
+        case "parent":
+            query.class = {
+                students: {
+                    some: {
+                        parentId: currentUserId!
+                    }
+                }
+            }
+        default:
+            break;
+    }
+
+    //DATA
     const data = await prisma.lesson.findMany({
         where: query,
         include: {
@@ -122,7 +152,7 @@ const LessonListPage = async ({ searchParams }: { searchParams: Record<string, s
                         <button className="w-8 h-8 flex items-center justify-center rounded-full bg-sky">
                             <Image src="/sort.png" alt="" width={14} height={14} />
                         </button>
-                        {role === "admin" && <FormModal table="lesson" type="create" />}
+                        {(role === "admin" || role === "teacher") && <FormModal table="lesson" type="create" />}
                     </div>
                 </div>
             </div>

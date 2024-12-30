@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputField from "./forms_components/InputField";
+import { Dispatch, SetStateAction } from "react";
 
 const schema = z.object({
     username: z
@@ -28,9 +29,11 @@ const schema = z.object({
 type Inputs = z.infer<typeof schema>;
 
 const TeacherForm = ({
+    setOpen,
     type,
     data,
 }: {
+    setOpen: Dispatch<SetStateAction<boolean>>;
     type: "create" | "update";
     data?: any;
 }) => {

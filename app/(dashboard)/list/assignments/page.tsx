@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { role } from "@/lib/data";
+import { currentUserId, role } from "@/lib/utils";
 import prisma from "@/lib/prisma";
 import { Prisma, Assignment, Subject, Class, Teacher } from "@prisma/client";
 
@@ -13,9 +13,10 @@ import FormModal from "@/components/lists/FormModal";
 type AssignmentType = Assignment & { subject: Subject } & { class: Class } & { teacher: Teacher };
 
 const columns = [
-    {   header: "Title", 
-        accessor: "title", 
-        className: "text-left pl-4" 
+    {
+        header: "Title",
+        accessor: "title",
+        className: "text-left pl-4"
     },
     {
         header: "Subject Name",
@@ -40,7 +41,7 @@ const columns = [
     {
         header: "Actions",
         accessor: "action",
-        className: role === "admin" ? "" : "hidden",
+        className: (role === "admin" || role === "teacher") ? "" : "hidden",
     },
 ];
 
@@ -71,8 +72,10 @@ const AssignmentListPage = async ({ searchParams }: { searchParams: Record<strin
     const resolvedSearchParams = await searchParams;
     const page = resolvedSearchParams?.page ? parseInt(resolvedSearchParams.page) : 1;
 
-    //Search Params condition
+    //QUERIES
     const query: Prisma.AssignmentWhereInput = {};
+
+    //Search Params condition
     if (Object.keys(resolvedSearchParams).length > 0) {
         for (const [key, value] of Object.entries(resolvedSearchParams)) {
             if (value !== undefined) {
@@ -97,6 +100,30 @@ const AssignmentListPage = async ({ searchParams }: { searchParams: Record<strin
         }
     }
 
+    //Role conditions
+    switch (role) {
+        case "admin":
+            break;
+        case "teacher":
+            query.teacherId = currentUserId!;
+            break;
+        case "student":
+            query.students = {
+                some: {
+                    id: currentUserId!
+                }
+            }
+        case "parent":
+            query.students = {
+                some: {
+                    parentId: currentUserId!
+                }
+            }
+        default:
+            break;
+    }
+
+    //DATA
     const data = await prisma.assignment.findMany({
         where: query,
         include: {

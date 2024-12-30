@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { role } from "@/lib/data";
+import { role } from "@/lib/utils";
 import prisma from "@/lib/prisma";
 import { Prisma, Announcement, Class } from "@prisma/client";
 
@@ -75,8 +75,10 @@ const AnnouncementListPage = async ({
     const resolvedSearchParams = await searchParams;
     const page = resolvedSearchParams?.page ? parseInt(resolvedSearchParams.page) : 1;
 
-    // Query de busca
+    //QUERIES
     const query: Prisma.AnnouncementWhereInput = {};
+
+    //Search params conditions
     if (Object.keys(resolvedSearchParams).length > 0) {
         for (const [key, value] of Object.entries(resolvedSearchParams)) {
             if (value !== undefined) {
@@ -98,7 +100,7 @@ const AnnouncementListPage = async ({
         }
     }
 
-    // Obtenção de dados
+    //DATA
     const data = await prisma.announcement.findMany({
         where: query,
         include: {

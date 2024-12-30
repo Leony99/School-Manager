@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { role } from "@/lib/data";
+import { currentUserId, role } from "@/lib/utils";
 import prisma from "@/lib/prisma";
 import { Prisma, Result } from "@prisma/client";
 
@@ -57,7 +57,7 @@ const columns = [
     {
         header: "Actions",
         accessor: "action",
-        className: role === "admin" ? "" : "hidden",
+        className: (role === "admin" || role === "teacher") ? "" : "hidden",
     },
 ];
 
@@ -110,8 +110,10 @@ const ResultListPage = async ({ searchParams }: { searchParams: Record<string, s
     const resolvedSearchParams = await searchParams;
     const page = resolvedSearchParams?.page ? parseInt(resolvedSearchParams.page) : 1;
 
-    //Search Params condition
+    //QUERY
     const query: Prisma.ResultWhereInput = {};
+
+    //Search Params condition
     if (Object.keys(resolvedSearchParams).length > 0) {
         for (const [key, value] of Object.entries(resolvedSearchParams)) {
             if (value !== undefined) {
@@ -151,6 +153,29 @@ const ResultListPage = async ({ searchParams }: { searchParams: Record<string, s
         }
     }
 
+    //Role conditions
+    switch (role) {
+        case "admin":
+            break;
+        case "teacher":
+            query.OR = [
+                { assignment: { teacherId: currentUserId! } },
+                { exam: { teacherId: currentUserId! } },
+            ]
+            break;
+        case "student":
+            query.studentId = currentUserId!;
+            break;
+        case "parent":
+            query.student = {
+                parentId: currentUserId!
+            }
+            break;
+        default:
+            break;
+    }
+
+    //DATA
     const data = await prisma.result.findMany({
         where: query,
         include: {
