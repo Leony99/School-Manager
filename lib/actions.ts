@@ -1,7 +1,7 @@
 "use server";
 
 import {
-  ClassSchema,
+  ClassSchemaType,
   ExamSchema,
   StudentSchema,
   SubjectSchemaType,
@@ -12,6 +12,7 @@ import { clerkClient } from "@clerk/nextjs/server";
 
 type CurrentState = { success: boolean; error: boolean };
 
+//SUBJECT
 export const createSubject = async (
   currentState: CurrentState,
   data: SubjectSchemaType
@@ -76,17 +77,16 @@ export const deleteSubject = async (
   }
 };
 
-/*
+//CLASS
 export const createClass = async (
   currentState: CurrentState,
-  data: ClassSchema
+  data: ClassSchemaType
 ) => {
   try {
     await prisma.class.create({
       data,
     });
 
-    // revalidatePath("/list/class");
     return { success: true, error: false };
   } catch (err) {
     console.log(err);
@@ -96,7 +96,7 @@ export const createClass = async (
 
 export const updateClass = async (
   currentState: CurrentState,
-  data: ClassSchema
+  data: ClassSchemaType
 ) => {
   try {
     await prisma.class.update({
@@ -106,7 +106,6 @@ export const updateClass = async (
       data,
     });
 
-    // revalidatePath("/list/class");
     return { success: true, error: false };
   } catch (err) {
     console.log(err);
@@ -126,7 +125,6 @@ export const deleteClass = async (
       },
     });
 
-    // revalidatePath("/list/class");
     return { success: true, error: false };
   } catch (err) {
     console.log(err);
@@ -134,6 +132,7 @@ export const deleteClass = async (
   }
 };
 
+/*
 export const createTeacher = async (
   currentState: CurrentState,
   data: TeacherSchema

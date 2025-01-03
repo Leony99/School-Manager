@@ -4,7 +4,6 @@
 
 - Users page
 
-- Fetch select options(teacher in subject Form)
 - Replicate subject form in other lists 
     - Update lib/actions.ts
     - Update deleteActionMap in FormModal.

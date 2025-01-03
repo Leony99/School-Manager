@@ -33,10 +33,12 @@ const ResultForm = ({
     setOpen,
     type,
     data,
+    relatedData,
 }: {
     setOpen: Dispatch<SetStateAction<boolean>>;
     type: "create" | "update";
     data?: any;
+    relatedData?: any;
 }) => {
     const {
         register,

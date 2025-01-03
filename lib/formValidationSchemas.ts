@@ -16,7 +16,7 @@ export const classSchema = z.object({
   supervisorId: z.coerce.string().optional(),
 });
 
-export type ClassSchema = z.infer<typeof classSchema>;
+export type ClassSchemaType = z.infer<typeof classSchema>;
 
 export const teacherSchema = z.object({
   id: z.string().optional(),
