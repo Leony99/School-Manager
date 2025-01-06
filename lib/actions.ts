@@ -5,7 +5,7 @@ import {
   ExamSchema,
   StudentSchema,
   SubjectSchemaType,
-  TeacherSchema,
+  TeacherSchemaType,
 } from "./formValidationSchemas";
 import prisma from "./prisma";
 import { clerkClient } from "@clerk/nextjs/server";
@@ -132,23 +132,14 @@ export const deleteClass = async (
   }
 };
 
-/*
+//TEACHER
 export const createTeacher = async (
   currentState: CurrentState,
-  data: TeacherSchema
+  data: TeacherSchemaType
 ) => {
   try {
-    const user = await clerkClient.users.createUser({
-      username: data.username,
-      password: data.password,
-      firstName: data.name,
-      lastName: data.surname,
-      publicMetadata:{role:"teacher"}
-    });
-
     await prisma.teacher.create({
       data: {
-        id: user.id,
         username: data.username,
         name: data.name,
         surname: data.surname,
@@ -167,7 +158,6 @@ export const createTeacher = async (
       },
     });
 
-    // revalidatePath("/list/teachers");
     return { success: true, error: false };
   } catch (err) {
     console.log(err);
@@ -177,19 +167,12 @@ export const createTeacher = async (
 
 export const updateTeacher = async (
   currentState: CurrentState,
-  data: TeacherSchema
+  data: TeacherSchemaType
 ) => {
   if (!data.id) {
     return { success: false, error: true };
   }
   try {
-    const user = await clerkClient.users.updateUser(data.id, {
-      username: data.username,
-      ...(data.password !== "" && { password: data.password }),
-      firstName: data.name,
-      lastName: data.surname,
-    });
-
     await prisma.teacher.update({
       where: {
         id: data.id,
@@ -213,7 +196,7 @@ export const updateTeacher = async (
         },
       },
     });
-    // revalidatePath("/list/teachers");
+
     return { success: true, error: false };
   } catch (err) {
     console.log(err);
@@ -227,15 +210,12 @@ export const deleteTeacher = async (
 ) => {
   const id = data.get("id") as string;
   try {
-    await clerkClient.users.deleteUser(id);
-
     await prisma.teacher.delete({
       where: {
         id: id,
       },
     });
 
-    // revalidatePath("/list/teachers");
     return { success: true, error: false };
   } catch (err) {
     console.log(err);
@@ -243,6 +223,7 @@ export const deleteTeacher = async (
   }
 };
 
+/*
 export const createStudent = async (
   currentState: CurrentState,
   data: StudentSchema
