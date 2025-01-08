@@ -1,5 +1,5 @@
-import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import prisma from "@/lib/prisma";
 
 import EventCalendar from "@/components/home/EventCalendar";
 import Announcements from "@/components/home/Announcements";
@@ -10,7 +10,7 @@ const StudentPage = async () => {
 
   const classItem = await prisma.class.findMany({
     where: {
-      students: { some: { id: userId! } },
+      students: { some: { clerkId: userId! } },
     },
   });
 

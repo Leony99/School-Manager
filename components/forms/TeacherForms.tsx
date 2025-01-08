@@ -29,9 +29,8 @@ const TeacherForm = ({
     } = useForm<TeacherSchemaType>({
         resolver: zodResolver(teacherSchema),
     });
-
     const [img, setImg] = useState<any>();
-    
+
     const [state, formAction] = useActionState(
         type === "create" ? createTeacher : updateTeacher,
         {
@@ -41,7 +40,6 @@ const TeacherForm = ({
     );
 
     const onSubmit = handleSubmit((data) => {
-        console.log(data);
         startTransition(() => formAction(data));
     });
 
@@ -134,6 +132,26 @@ const TeacherForm = ({
                     error={errors.birthday}
                     type="date"
                 />
+                {data && (
+                    <InputField
+                        label="Id"
+                        name="id"
+                        defaultValue={data?.id}
+                        register={register}
+                        error={errors?.id}
+                        hidden
+                    />
+                )}
+                {data && (
+                    <InputField
+                        label="ClerkId"
+                        name="clerkId"
+                        defaultValue={data?.clerkId}
+                        register={register}
+                        error={errors?.clerkId}
+                        hidden
+                    />
+                )}
                 <div className="flex flex-col gap-2 w-full md:w-1/4">
                     <label className="text-xs text-gray-500">Sex</label>
                     <select

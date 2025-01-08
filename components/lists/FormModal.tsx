@@ -11,11 +11,11 @@ import { FormContainerProps } from "./FormContainer";
 const deleteActionMap = {
     subject: deleteSubject,
     class: deleteClass,
+    student: deleteSubject,
+    parent: deleteSubject,
     teacher: deleteTeacher,
     // TODO: OTHER DELETE ACTIONS
-    student: deleteSubject,
     exam: deleteSubject,
-    parent: deleteSubject,
     lesson: deleteSubject,
     assignment: deleteSubject,
     result: deleteSubject,
@@ -84,8 +84,11 @@ const FormModal = ({
     type,
     data,
     id,
+    clerkId,
     relatedData,
 }: FormContainerProps & { relatedData?: any }) => {
+
+    console.log(clerkId);
 
     const size = type === "create" ? "w-8 h-8" : "w-7 h-7";
     const [open, setOpen] = useState(false);
@@ -103,7 +106,7 @@ const FormModal = ({
 
         useEffect(() => {
             if (state.success) {
-                toast(`Subject has been deleted!`);
+                toast(`${table} has been deleted!`);
                 setOpen(false);
                 router.refresh();
             }
@@ -113,6 +116,7 @@ const FormModal = ({
             type === "delete" && id ? (
                 <form action={formAction} className="p-4 flex flex-col gap-4">
                     <input type="text | number" name="id" value={id} readOnly hidden />
+                    <input type="text | number | null" name="clerkId" value={clerkId} readOnly hidden />
                     <span className="text-center font-medium">
                         All data will be lost. Are you sure you want to delete this {table}?
                     </span>

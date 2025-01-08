@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { role } from "@/lib/utils";
+import { role } from "@/lib/role";
 import prisma from "@/lib/prisma";
 import { Prisma, Teacher, Subject, Class } from "@prisma/client";
 
@@ -80,7 +80,7 @@ const renderRow = (item: TeacherType) => (
                 {role === "admin" && (
                     <>
                         <FormContainer table="teacher" type="update" data={item} />
-                        <FormContainer table="teacher" type="delete" id={item.id} />
+                        <FormContainer table="teacher" type="delete" id={item.id} clerkId={item.clerkId} />
                     </>
                 )}
             </div>

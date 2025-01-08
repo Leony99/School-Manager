@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { currentUserId, role } from "@/lib/utils";
+import { currentUserId, role } from "@/lib/role";
 import prisma from "@/lib/prisma";
 import { Prisma, Lesson, Subject, Class, Teacher } from "@prisma/client";
 
@@ -41,7 +41,9 @@ const renderRow = (item: LessonType) => (
     >
         <td className="flex items-center gap-4 p-4">{item.subject.name}</td>
         <td className="text-center" >{item.class.name}</td>
-        <td className="hidden text-center md:table-cell">{item.teacher.name} {item.teacher.surname}</td>
+        <td className="hidden text-center md:table-cell">
+            {item.teacher.name} {item.teacher.surname}
+        </td>
         <td>
             <div className="flex items-center justify-center gap-2">
                 {(role === "admin" || role === "teacher") && (
@@ -58,10 +60,10 @@ const renderRow = (item: LessonType) => (
 const LessonListPage = async ({ searchParams }: { searchParams: Record<string, string> }) => {
     const resolvedSearchParams = await searchParams;
     const page = resolvedSearchParams?.page ? parseInt(resolvedSearchParams.page) : 1;
-    
+
     //QUERY
     const query: Prisma.LessonWhereInput = {};
-    
+
     //Search Params condition
     if (Object.keys(resolvedSearchParams).length > 0) {
         for (const [key, value] of Object.entries(resolvedSearchParams)) {
@@ -71,7 +73,7 @@ const LessonListPage = async ({ searchParams }: { searchParams: Record<string, s
                         query.class = {
                             students: {
                                 some: {
-                                   id: value
+                                    id: value
                                 }
                             }
                         };
@@ -100,21 +102,33 @@ const LessonListPage = async ({ searchParams }: { searchParams: Record<string, s
         case "admin":
             break;
         case "teacher":
-            query.teacherId = currentUserId!;
+            const teacher = await prisma.teacher.findUnique({
+                where: { clerkId: currentUserId! },
+                select: { id: true },
+            })
+            query.teacherId = teacher?.id!;
             break;
         case "student":
+            const student = await prisma.student.findUnique({
+                where: { clerkId: currentUserId! },
+                select: { id: true },
+            })
             query.class = {
                 students: {
                     some: {
-                        id: currentUserId!
+                        id: student?.id!
                     }
                 }
             }
         case "parent":
+            const parent = await prisma.parent.findUnique({
+                where: { clerkId: currentUserId! },
+                select: { id: true },
+            })
             query.class = {
                 students: {
                     some: {
-                        parentId: currentUserId!
+                        parentId: parent?.id!
                     }
                 }
             }
@@ -128,7 +142,7 @@ const LessonListPage = async ({ searchParams }: { searchParams: Record<string, s
         include: {
             subject: { select: { name: true } },
             class: { select: { name: true } },
-            teacher: { select: { name: true } },
+            teacher: { select: { name: true, surname: true } },
         },
         take: ITEM_PER_PAGE,
         skip: (page - 1) * ITEM_PER_PAGE,
@@ -161,7 +175,7 @@ const LessonListPage = async ({ searchParams }: { searchParams: Record<string, s
             <Table columns={columns} renderRow={renderRow} data={data} />
 
             {/* PAGINATION */}
-            <Pagination page={page} count={count}/>
+            <Pagination page={page} count={count} />
         </div>
     );
 };

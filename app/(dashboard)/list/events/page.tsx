@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { currentUserId, role } from "@/lib/utils";
+import { currentUserId, role } from "@/lib/role";
 import prisma from "@/lib/prisma";
 import { Prisma, Event, Class } from "@prisma/client";
 
@@ -110,23 +110,35 @@ const EventListPage = async ({ searchParams }: { searchParams: Record<string, st
         case "admin":
             break;
         case "teacher":
+            const teacher = await prisma.teacher.findUnique({
+                where: { clerkId: currentUserId! },
+                select: { id: true },
+            })
             query.class = {
-                supervisorId: currentUserId!
+                supervisorId: teacher?.id!
             };
             break;
         case "student":
+            const student = await prisma.student.findUnique({
+                where: { clerkId: currentUserId! },
+                select: { id: true },
+            })
             query.class = {
                 students: {
                     some: {
-                        id: currentUserId!
+                        id: student?.id!
                     }
                 }
             }
         case "parent":
+            const parent = await prisma.parent.findUnique({
+                where: { clerkId: currentUserId! },
+                select: { id: true },
+            })
             query.class = {
                 students: {
                     some: {
-                        parentId: currentUserId!
+                        parentId: parent?.id!
                     }
                 }
             }

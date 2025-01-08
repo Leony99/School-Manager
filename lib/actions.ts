@@ -138,8 +138,18 @@ export const createTeacher = async (
   data: TeacherSchemaType
 ) => {
   try {
+    const client = await clerkClient();
+    const user = await client.users.createUser({
+      username: data.username,
+      password: data.password,
+      firstName: data.name,
+      lastName: data.surname,
+      publicMetadata:{role:"teacher"}
+    });
+    
     await prisma.teacher.create({
       data: {
+        clerkId: user.id || null,
         username: data.username,
         name: data.name,
         surname: data.surname,
@@ -169,16 +179,26 @@ export const updateTeacher = async (
   currentState: CurrentState,
   data: TeacherSchemaType
 ) => {
+  if (!data.clerkId) {
+    return { success: false, error: true };
+  }
   if (!data.id) {
     return { success: false, error: true };
   }
   try {
+    const client = await clerkClient()
+    const user = await client.users.updateUser(data.clerkId, {
+      username: data.username,
+      ...(data.password !== "" && { password: data.password }),
+      firstName: data.name,
+      lastName: data.surname,
+    });
+
     await prisma.teacher.update({
       where: {
         id: data.id,
       },
       data: {
-        ...(data.password !== "" && { password: data.password }),
         username: data.username,
         name: data.name,
         surname: data.surname,
@@ -208,8 +228,12 @@ export const deleteTeacher = async (
   currentState: CurrentState,
   data: FormData
 ) => {
+  const clerkId = data.get("clerkId") as string;
   const id = data.get("id") as string;
   try {
+    const client = await clerkClient();
+    await client.users.deleteUser(clerkId);
+
     await prisma.teacher.delete({
       where: {
         id: id,

@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { currentUserId, role } from "@/lib/utils";
+import { currentUserId, role } from "@/lib/role";
 import prisma from "@/lib/prisma";
 import { Prisma, Assignment, Subject, Class, Teacher } from "@prisma/client";
 
@@ -105,18 +105,30 @@ const AssignmentListPage = async ({ searchParams }: { searchParams: Record<strin
         case "admin":
             break;
         case "teacher":
-            query.teacherId = currentUserId!;
+            const teacher = await prisma.teacher.findUnique({
+                where: { clerkId: currentUserId! },
+                select: { id: true },
+            })
+            query.teacherId = teacher?.id!;
             break;
         case "student":
+            const student = await prisma.student.findUnique({
+                where: { clerkId: currentUserId! },
+                select: { id: true },
+            })
             query.students = {
                 some: {
-                    id: currentUserId!
+                    id: student?.id!
                 }
             }
         case "parent":
+            const parent = await prisma.parent.findUnique({
+                where: { clerkId: currentUserId! },
+                select: { id: true },
+            })
             query.students = {
                 some: {
-                    parentId: currentUserId!
+                    parentId: parent?.id!
                 }
             }
         default:

@@ -29,12 +29,14 @@ enum Day {
 
 model Admin {
   id       String @id @default(uuid())
+  clerkId  String? @unique
   username String @unique
   password String
 }
 
 model Student {
   id        String   @id @default(uuid())
+  clerkId   String?   @unique
   username  String   @unique
   name      String
   surname   String
@@ -60,6 +62,7 @@ model Student {
 
 model Parent {
   id        String   @id @default(uuid())
+  clerkId   String?   @unique
   username  String   @unique
   name      String
   surname   String
@@ -73,6 +76,7 @@ model Parent {
 
 model Teacher {
   id        String   @id @default(uuid())
+  clerkId   String?   @unique
   username  String   @unique
   name      String
   surname   String

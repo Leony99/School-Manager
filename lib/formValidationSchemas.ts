@@ -20,9 +20,10 @@ export type ClassSchemaType = z.infer<typeof classSchema>;
 
 export const teacherSchema = z.object({
   id: z.string().optional(),
+  clerkId: z.string().optional(),
   username: z
     .string()
-    .min(3, { message: "Username must be at least 3 characters long!" })
+    .min(4, { message: "Username must be at least 4 characters long!" })
     .max(20, { message: "Username must be at most 20 characters long!" }),
   password: z
     .string()
