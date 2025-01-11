@@ -1,9 +1,13 @@
-- Consertar update forms nas listas
-    - Trocar input por select em dados de relação 
-    - Formato de data
-
 - Users page
 
-- Replicate subject form in other lists 
-    - Update lib/actions.ts
+- Replicate forms in other lists 
+    - Update actions
     - Update deleteActionMap in FormModal.
+
+- Error treatment for unique fields in database
+
+- Organize menu
+    - Users
+    - School
+    - Academics
+    - Warnings

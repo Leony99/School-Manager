@@ -1,28 +1,13 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputField from "./forms_components/InputField";
-import { Dispatch, SetStateAction } from "react";
-
-const schema = z.object({
-    username: z
-        .string()
-        .min(3, { message: "Username must be at least 3 characters long!" })
-        .max(20, { message: "Username must be at most 20 characters long!" }),
-    email: z.string().email({ message: "Invalid email address!" }),
-    password: z
-        .string()
-        .min(8, { message: "Password must be at least 8 characters long!" }),
-    firstName: z.string().min(1, { message: "First name is required!" }),
-    lastName: z.string().min(1, { message: "Last name is required!" }),
-    phone: z.string().min(1, { message: "Phone is required!" }),
-    address: z.string().min(1, { message: "Address is required!" }),
-    sex: z.enum(["male", "female"], { message: "Sex is required!" }),
-});
-
-type Inputs = z.infer<typeof schema>;
+import { Dispatch, SetStateAction, startTransition, useActionState, useEffect } from "react";
+import { parentSchema, ParentSchemaType } from "@/lib/formSchemas/parent";
+import { createParent, updateParent } from "@/lib/formActions/parent";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 const ParentForm = ({
     setOpen,
@@ -39,13 +24,33 @@ const ParentForm = ({
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<Inputs>({
-        resolver: zodResolver(schema),
+    } = useForm<ParentSchemaType>({
+        resolver: zodResolver(parentSchema),
     });
 
+    const [state, formAction] = useActionState(
+        type === "create" ? createParent : updateParent,
+        {
+            success: false,
+            error: false,
+        }
+    );
+
     const onSubmit = handleSubmit((data) => {
-        console.log(data);
+        startTransition(() => formAction(data));
     });
+
+    const router = useRouter();
+
+    useEffect(() => {
+        if (state.success) {
+            toast(`Parent has been ${type === "create" ? "created" : "updated"}!`);
+            setOpen(false);
+            router.refresh();
+        }
+    }, [state, router, setOpen]);
+
+    const { students } = relatedData;
 
     return (
         <form className="flex flex-col gap-8" onSubmit={onSubmit}>
@@ -82,18 +87,18 @@ const ParentForm = ({
             </span>
             <div className="flex justify-around flex-wrap gap-4">
                 <InputField
-                    label="First Name"
-                    name="firstName"
-                    defaultValue={data?.firstName}
+                    label="Name"
+                    name="name"
+                    defaultValue={data?.name}
                     register={register}
-                    error={errors.firstName}
+                    error={errors.name}
                 />
                 <InputField
-                    label="Last Name"
-                    name="lastName"
-                    defaultValue={data?.lastName}
+                    label="Surname"
+                    name="surname"
+                    defaultValue={data?.surname}
                     register={register}
-                    error={errors.lastName}
+                    error={errors.surname}
                 />
                 <InputField
                     label="Phone"
@@ -109,19 +114,33 @@ const ParentForm = ({
                     register={register}
                     error={errors.address}
                 />
+                {data && (
+                    <InputField
+                        label="Id"
+                        name="id"
+                        defaultValue={data?.id}
+                        register={register}
+                        error={errors?.id}
+                        hidden
+                    />
+                )}
                 <div className="flex flex-col gap-2 w-full md:w-1/4">
-                    <label className="text-xs text-gray-500">Sex</label>
+                    <label className="text-xs text-gray-500">Students</label>
                     <select
+                        multiple
                         className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
-                        {...register("sex")}
-                        defaultValue={data?.sex}
+                        {...register("students")}
+                        defaultValue={data?.students}
                     >
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
+                        {students.map((student: { id: string; name: string; surname: string }) => (
+                            <option value={student.id} key={student.id}>
+                                {student.name} {student.surname}
+                            </option>
+                        ))}
                     </select>
-                    {errors.sex?.message && (
+                    {errors.students?.message && (
                         <p className="text-xs text-red-400">
-                            {errors.sex.message.toString()}
+                            {errors.students.message.toString()}
                         </p>
                     )}
                 </div>

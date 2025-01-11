@@ -72,7 +72,7 @@ const renderRow = (item: StudentType) => (
                 {role === "admin" && (
                     <>
                         <FormContainer table="student" type="update" data={item} />
-                        <FormContainer table="student" type="delete" id={item.id} clerkId={item.clerkId} />
+                        <FormContainer table="student" type="delete" id={item.id} />
                     </>
                 )}
             </div>
@@ -132,12 +132,8 @@ const StudentListPage = async ({ searchParams }: { searchParams: Record<string, 
         case "admin":
             break;
         case "teacher":
-            const teacher = await prisma.teacher.findUnique({
-                where: { clerkId: currentUserId! },
-                select: { id: true },
-            })
             query.class = {
-                supervisorId: teacher?.id!
+                supervisorId: currentUserId!
             }
             break;
         default:

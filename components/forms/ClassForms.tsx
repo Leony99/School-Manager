@@ -2,10 +2,9 @@
 
 import { Dispatch, SetStateAction, startTransition, useActionState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { classSchema, ClassSchemaType } from "@/lib/formValidationSchemas";
+import { classSchema, ClassSchemaType, createClass, updateClass } from "@/lib/formActions/class";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputField from "./forms_components/InputField";
-import { createClass, updateClass } from "@/lib/actions";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 

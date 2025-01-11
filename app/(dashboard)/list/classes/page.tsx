@@ -109,11 +109,7 @@ const ClassListPage = async ({ searchParams }: { searchParams: Record<string, st
         case "admin":
             break;
         case "teacher":
-            const teacher = await prisma.teacher.findUnique({
-                where: { clerkId: currentUserId! },
-                select: { id: true },
-            })
-            query.supervisorId = teacher?.id!;
+            query.supervisorId = currentUserId!;
             break;
         default:
             break;

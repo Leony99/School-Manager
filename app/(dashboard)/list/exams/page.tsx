@@ -104,30 +104,18 @@ const ExamListPage = async ({ searchParams }: { searchParams: Record<string, str
         case "admin":
             break;
         case "teacher":
-            const teacher = await prisma.teacher.findUnique({
-                where: { clerkId: currentUserId! },
-                select: { id: true },
-            })
-            query.teacherId = teacher?.id!;
+            query.teacherId = currentUserId!;
             break;
         case "student":
-            const student = await prisma.student.findUnique({
-                where: { clerkId: currentUserId! },
-                select: { id: true },
-            })
             query.students = {
                 some: {
-                    id: student?.id!
+                    id: currentUserId!
                 }
             }
         case "parent":
-            const parent = await prisma.parent.findUnique({
-                where: { clerkId: currentUserId! },
-                select: { id: true },
-            })
             query.students = {
                 some: {
-                    parentId: parent?.id!
+                    parentId: currentUserId!
                 }
             }
         default:

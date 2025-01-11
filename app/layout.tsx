@@ -22,7 +22,7 @@ export default function RootLayout({
           <title>School Manager</title>
           <meta name="description" content="Next.js School Management System" />
         </Head>
-        <body className={inter.className}>
+        <body className={`${inter.className} overflow-x-hidden`}>
           {children}
           <ToastContainer position="bottom-right" theme="dark" />
         </body>
