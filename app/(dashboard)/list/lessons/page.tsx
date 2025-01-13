@@ -69,6 +69,9 @@ const LessonListPage = async ({ searchParams }: { searchParams: Record<string, s
         for (const [key, value] of Object.entries(resolvedSearchParams)) {
             if (value !== undefined) {
                 switch (key) {
+                    case "teacherId":
+                        query.teacherId = value;
+                        break;
                     case "studentId":
                         query.class = {
                             students: {

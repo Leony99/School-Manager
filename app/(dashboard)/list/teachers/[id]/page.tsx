@@ -1,14 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
+import { notFound } from "next/navigation";
 
 import Announcements from "@/components/home/Announcements";
 import Performance from "@/components/home/Performance";
 import BigCalendarContainer from "@/components/home/BigCalendarContainer";
-
-import { Teacher } from "@prisma/client";
-import prisma from "@/lib/prisma";
-import { notFound } from "next/navigation";
 import FormContainer from "@/components/lists/FormContainer";
+
+import prisma from "@/lib/prisma";
+import { Teacher } from "@prisma/client";
 import { auth } from "@clerk/nextjs/server";
 
 const SingleTeacherPage = async ({ params: { id } }: { params: { id: string } }) => {
@@ -43,6 +43,7 @@ const SingleTeacherPage = async ({ params: { id } }: { params: { id: string } })
       <div className="w-full xl:w-2/3">
         {/* TOP */}
         <div className="flex flex-col lg:flex-row gap-4">
+
           {/* USER INFO CARD */}
           <div className="bg-sky py-6 px-4 rounded-md flex-1 flex gap-4">
             <div className="w-1/3">
@@ -79,6 +80,7 @@ const SingleTeacherPage = async ({ params: { id } }: { params: { id: string } })
               </div>
             </div>
           </div>
+
           {/* SMALL CARDS */}
           <div className="flex-1 flex gap-4 justify-evenly flex-wrap">
             {/* CARD */}
@@ -152,24 +154,24 @@ const SingleTeacherPage = async ({ params: { id } }: { params: { id: string } })
         <div className="bg-white p-4 rounded-md">
           <h1 className="text-xl font-semibold">Shortcuts</h1>
           <div className="mt-4 flex gap-4 flex-wrap text-xs text-gray-500">
-            <Link className="p-3 rounded-md bg-skyLight" 
-            href={`/list/classes?supervisorId=${teacher.id}`}>
+            <Link className="p-3 rounded-md bg-skyLight"
+              href={`/list/classes?teacherId=${id}`}>
               Teacher&apos;s Classes
             </Link>
-            <Link className="p-3 rounded-md bg-purpleLight" 
-            href={`/list/students?teacherId=${teacher.id}`}>
+            <Link className="p-3 rounded-md bg-purpleLight"
+              href={`/list/students?teacherId=${id}`}>
               Teacher&apos;s Students
             </Link>
-            <Link className="p-3 rounded-md bg-yellowLight" 
-            href={`/list/lessons?teacherId=${teacher.id}`}>
+            <Link className="p-3 rounded-md bg-yellowLight"
+              href={`/list/lessons?teacherId=${id}`}>
               Teacher&apos;s Lessons
             </Link>
-            <Link className="p-3 rounded-md bg-skyLight" 
-            href={`/list/assignments?teacherId=${teacher.id}`}>
+            <Link className="p-3 rounded-md bg-skyLight"
+              href={`/list/assignments?teacherId=${id}`}>
               Teacher&apos;s Assignments
             </Link>
-            <Link className="p-3 rounded-md bg-pink-50" 
-            href={`/list/exams?teacherId=${teacher.id}`}>
+            <Link className="p-3 rounded-md bg-pink-50"
+              href={`/list/exams?teacherId=${id}`}>
               Teacher&apos;s Exams
             </Link>
           </div>

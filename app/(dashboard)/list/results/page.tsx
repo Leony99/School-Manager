@@ -62,7 +62,7 @@ const columns = [
 ];
 
 const renderRow = (item: ResultType) => (
-    
+
     <tr
         key={item.id}
         className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-purpleLight"
@@ -82,14 +82,14 @@ const renderRow = (item: ResultType) => (
                 </h3>
                 <p className="text-center">
                     {item.assignment?.teacher ? `${item.assignment.teacher.name} ${item.assignment.teacher.surname}`
-                    : item.exam?.teacher ? `${item.exam.teacher.name} ${item.exam.teacher.surname}` : "N/A"}
+                        : item.exam?.teacher ? `${item.exam.teacher.name} ${item.exam.teacher.surname}` : "N/A"}
                 </p>
             </div>
         </td>
         <td className="hidden text-center xl:table-cell">
             {item.assignment?.dueDate
-                    ? new Intl.DateTimeFormat('en-US').format(new Date(item.assignment.dueDate))
-                    : item.exam?.startTime
+                ? new Intl.DateTimeFormat('en-US').format(new Date(item.assignment.dueDate))
+                : item.exam?.startTime
                     ? new Intl.DateTimeFormat('en-US').format(new Date(item.exam.startTime))
                     : "N/A"}
         </td>
@@ -118,6 +118,9 @@ const ResultListPage = async ({ searchParams }: { searchParams: Record<string, s
         for (const [key, value] of Object.entries(resolvedSearchParams)) {
             if (value !== undefined) {
                 switch (key) {
+                    case "studentId":
+                        query.studentId = value;
+                        break;
                     case "search":
                         const terms = value.split(" ");
 
@@ -232,7 +235,7 @@ const ResultListPage = async ({ searchParams }: { searchParams: Record<string, s
             <Table columns={columns} renderRow={renderRow} data={data} />
 
             {/* PAGINATION */}
-            <Pagination page={page} count={count}/>
+            <Pagination page={page} count={count} />
         </div>
     );
 };

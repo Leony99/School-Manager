@@ -94,11 +94,7 @@ const StudentListPage = async ({ searchParams }: { searchParams: Record<string, 
                 switch (key) {
                     case "teacherId":
                         query.class = {
-                            lessons: {
-                                some: {
-                                    teacherId: value
-                                }
-                            }
+                            supervisorId: value
                         };
                         break;
                     case "search":

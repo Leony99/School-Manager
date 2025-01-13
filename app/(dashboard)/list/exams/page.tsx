@@ -13,9 +13,10 @@ import FormModal from "@/components/lists/FormModal";
 type ExamType = Exam & { subject: Subject } & { class: Class } & { teacher: Teacher };
 
 const columns = [
-    {   header: "Title", 
-        accessor: "title", 
-        className: "text-left pl-4" 
+    {
+        header: "Title",
+        accessor: "title",
+        className: "text-left pl-4"
     },
     {
         header: "Subject Name",
@@ -70,15 +71,25 @@ const renderRow = (item: ExamType) => (
 const ExamListPage = async ({ searchParams }: { searchParams: Record<string, string> }) => {
     const resolvedSearchParams = await searchParams;
     const page = resolvedSearchParams?.page ? parseInt(resolvedSearchParams.page) : 1;
-    
+
     //QUERY
     const query: Prisma.ExamWhereInput = {};
-    
+
     //Search Params condition
     if (Object.keys(resolvedSearchParams).length > 0) {
         for (const [key, value] of Object.entries(resolvedSearchParams)) {
             if (value !== undefined) {
                 switch (key) {
+                    case "teacherId":
+                        query.teacherId = value;
+                        break;
+                    case "studentId":
+                        query.students = {
+                            some: {
+                                id: value
+                            }
+                        }
+                        break;
                     case "search":
                         const terms = value.split(" ");
 

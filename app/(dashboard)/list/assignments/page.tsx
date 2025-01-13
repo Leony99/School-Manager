@@ -80,6 +80,16 @@ const AssignmentListPage = async ({ searchParams }: { searchParams: Record<strin
         for (const [key, value] of Object.entries(resolvedSearchParams)) {
             if (value !== undefined) {
                 switch (key) {
+                    case "teacherId":
+                        query.teacherId = value;
+                        break;
+                    case "studentId":
+                        query.students = {
+                            some: {
+                                id: value
+                            }
+                        }
+                        break;
                     case "search":
                         const terms = value.split(" ");
 
