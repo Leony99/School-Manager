@@ -9,7 +9,7 @@ const TeacherPage = async () => {
   
   const teacher = await prisma.teacher.findUnique({
     where: {
-      clerkId: userId!,
+      id: userId!,
     },
   });
 

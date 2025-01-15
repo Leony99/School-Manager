@@ -1,15 +1,15 @@
+import { auth } from "@clerk/nextjs/server";
+import prisma from "@/lib/prisma";
+
 import Announcements from "@/components/home/Announcements";
 import BigCalendarContainer from "@/components/home/BigCalendarContainer";
-
-import prisma from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
 
 const ParentPage = async () => {
   const { userId } = await auth();
 
-  const classItem = await prisma.class.findMany({
+  const students = await prisma.student.findMany({
     where: {
-      students: { some: { parentId: userId! } },
+      parentId: userId!,
     },
   });
 
@@ -17,10 +17,14 @@ const ParentPage = async () => {
     <div className="flex-1 p-4 flex gap-4 flex-col xl:flex-row">
       {/* LEFT */}
       <div className="w-full xl:w-2/3">
-        <div className="h-full bg-white p-4 rounded-md">
-          <h1 className="text-xl font-semibold">Schedule (John Doe)</h1>
-          <BigCalendarContainer type="classId" id={classItem[0].id} />
-        </div>
+        {students.map((student, index) => (
+          <div key={index} className="h-full bg-white p-4 rounded-md">
+            <h1 className="text-xl font-semibold">
+              Schedule ({student.name} {student.surname})
+            </h1>
+            <BigCalendarContainer type="classId" id={student.classId} />
+          </div>
+        ))}
       </div>
       {/* RIGHT */}
       <div className="w-full xl:w-1/3 flex flex-col gap-8">

@@ -1,13 +1,16 @@
-- Users page
+- Home
+    - Admin
+        - Make use of finance chart element
+    - Parent, student, teacher
+        - Show more data in calendar(BigCalendarContainer) - showing only exams.
+        - Add event calendar(EventCalendarContainer) ?
 
-- Replicate forms in other lists 
-    - Update actions
-    - Update deleteActionMap in FormModal.
+- Users single page
+    - Student, teacher
+        - Make use of performance element
+        - Show more data in calendar(BigCalendarContainer) - showing only exams.
 
 - Error treatment for unique fields in database
 
-- Organize menu
-    - Users
-    - School
-    - Academics
-    - Warnings
+- Bugs
+    - Empty screen on logout
