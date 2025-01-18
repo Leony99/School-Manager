@@ -133,7 +133,6 @@ model Subject {
 model Lesson {
   id        Int      @id @default(autoincrement())
   name      String
-  day       Day
   startTime DateTime
   endTime   DateTime
 
@@ -158,7 +157,6 @@ model Assignment {
   teacherId String
   teacher   Teacher   @relation(fields: [teacherId], references: [id])
   students  Student[]
-  results   Result[]
 }
 
 model Exam {
@@ -181,10 +179,8 @@ model Result {
   id    Int @id @default(autoincrement())
   score Int
 
-  assignmentId Int?
-  assignment   Assignment? @relation(fields: [assignmentId], references: [id])
-  examId       Int?
-  exam         Exam?       @relation(fields: [examId], references: [id])
+  examId       Int
+  exam         Exam       @relation(fields: [examId], references: [id])
   studentId    String
   student      Student     @relation(fields: [studentId], references: [id])
 }

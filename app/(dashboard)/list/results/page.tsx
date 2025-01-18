@@ -8,16 +8,9 @@ import { Prisma, Result } from "@prisma/client";
 import TableSearch from "@/components/lists/TableSearch";
 import Table from "@/components/lists/Table";
 import Pagination from "@/components/lists/Pagination";
-import FormModal from "@/components/lists/FormModal";
+import FormContainer from "@/components/lists/FormContainer";
 
 type ResultType = Result & {
-    assignment?: {
-        title: string;
-        dueDate: Date;
-        subject: { name: string };
-        teacher: { name: string; surname: string };
-        class: { name: string };
-    };
     exam?: {
         title: string;
         startTime: Date;
@@ -69,8 +62,8 @@ const renderRow = (item: ResultType) => (
     >
         <td className="gap-4 p-4">
             <div className="flex flex-col">
-                <h3 className="font-semibold">{item.assignment?.title || item.exam?.title || "N/A"}</h3>
-                <p className="text-xs text-gray-500">{item.assignment?.subject?.name || item.exam?.subject?.name || "N/A"}</p>
+                <h3 className="font-semibold">{item.exam?.title || "N/A"}</h3>
+                <p className="text-xs text-gray-500">{item.exam?.subject?.name || "N/A"}</p>
             </div>
         </td>
         <td className="hidden text-center sm:table-cell">{item.student.name} {item.student.surname}</td>
@@ -78,18 +71,15 @@ const renderRow = (item: ResultType) => (
         <td className="hidden xl:table-cell gap-4 p-4">
             <div className="flex flex-col">
                 <h3 className="text-center">
-                    {item.assignment?.class?.name || item.exam?.class?.name || "N/A"}
+                    {item.exam?.class?.name || "N/A"}
                 </h3>
                 <p className="text-center">
-                    {item.assignment?.teacher ? `${item.assignment.teacher.name} ${item.assignment.teacher.surname}`
-                        : item.exam?.teacher ? `${item.exam.teacher.name} ${item.exam.teacher.surname}` : "N/A"}
+                    {item.exam?.teacher.name} {item.exam?.teacher.surname}
                 </p>
             </div>
         </td>
         <td className="hidden text-center xl:table-cell">
-            {item.assignment?.dueDate
-                ? new Intl.DateTimeFormat('en-US').format(new Date(item.assignment.dueDate))
-                : item.exam?.startTime
+            {item.exam?.startTime
                     ? new Intl.DateTimeFormat('en-US').format(new Date(item.exam.startTime))
                     : "N/A"}
         </td>
@@ -97,8 +87,8 @@ const renderRow = (item: ResultType) => (
             <div className="flex items-center justify-center gap-2">
                 {(role === "admin" || role === "teacher") && (
                     <>
-                        <FormModal table="result" type="update" data={item} />
-                        <FormModal table="result" type="delete" id={item.id} />
+                        <FormContainer table="result" type="update" data={item} />
+                        <FormContainer table="result" type="delete" id={item.id} />
                     </>
                 )}
             </div>
@@ -127,21 +117,16 @@ const ResultListPage = async ({ searchParams }: { searchParams: Record<string, s
                         query.AND = terms.map((term) => ({
                             OR: [
                                 // Title
-                                { assignment: { title: { contains: term, mode: "insensitive" } } },
                                 { exam: { title: { contains: term, mode: "insensitive" } } },
                                 // Subject names
-                                { assignment: { subject: { name: { contains: term, mode: "insensitive" } } } },
                                 { exam: { subject: { name: { contains: term, mode: "insensitive" } } } },
                                 // Student name and surname
                                 { student: { name: { contains: term, mode: "insensitive" } } },
                                 { student: { surname: { contains: term, mode: "insensitive" } } },
-                                // Teacher name and surname (assignment and exam)
-                                { assignment: { teacher: { name: { contains: term, mode: "insensitive" } } } },
-                                { assignment: { teacher: { surname: { contains: term, mode: "insensitive" } } } },
+                                // Teacher name and surname
                                 { exam: { teacher: { name: { contains: term, mode: "insensitive" } } } },
                                 { exam: { teacher: { surname: { contains: term, mode: "insensitive" } } } },
                                 // Class name
-                                { assignment: { class: { name: { contains: term, mode: "insensitive" } } } },
                                 { exam: { class: { name: { contains: term, mode: "insensitive" } } } },
                                 // Score (numeric value)
                                 { score: { equals: isNaN(Number(term)) ? undefined : Number(term) } },
@@ -162,7 +147,6 @@ const ResultListPage = async ({ searchParams }: { searchParams: Record<string, s
             break;
         case "teacher":
             query.OR = [
-                { assignment: { teacherId: currentUserId! } },
                 { exam: { teacherId: currentUserId! } },
             ]
             break;
@@ -182,15 +166,6 @@ const ResultListPage = async ({ searchParams }: { searchParams: Record<string, s
     const data = await prisma.result.findMany({
         where: query,
         include: {
-            assignment: {
-                select: {
-                    title: true,
-                    dueDate: true,
-                    subject: { select: { name: true } },
-                    teacher: { select: { name: true, surname: true } },
-                    class: { select: { name: true } },
-                },
-            },
             exam: {
                 select: {
                     title: true,
@@ -226,7 +201,7 @@ const ResultListPage = async ({ searchParams }: { searchParams: Record<string, s
                         <button className="w-8 h-8 flex items-center justify-center rounded-full bg-sky">
                             <Image src="/sort.png" alt="" width={14} height={14} />
                         </button>
-                        {(role === "admin" || role === "teacher") && <FormModal table="result" type="create" />}
+                        {(role === "admin" || role === "teacher") && <FormContainer table="result" type="create" />}
                     </div>
                 </div>
             </div>

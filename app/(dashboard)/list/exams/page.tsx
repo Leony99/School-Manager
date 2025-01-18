@@ -8,7 +8,7 @@ import { Prisma, Exam, Subject, Class, Teacher } from "@prisma/client";
 import TableSearch from "@/components/lists/TableSearch";
 import Table from "@/components/lists/Table";
 import Pagination from "@/components/lists/Pagination";
-import FormModal from "@/components/lists/FormModal";
+import FormContainer from "@/components/lists/FormContainer";
 
 type ExamType = Exam & { subject: Subject } & { class: Class } & { teacher: Teacher };
 
@@ -54,13 +54,27 @@ const renderRow = (item: ExamType) => (
         <td className="hidden text-center sm:table-cell">{item.subject.name}</td>
         <td className="hidden text-center md:table-cell">{item.class.name}</td>
         <td className="hidden text-center xl:table-cell">{item.teacher.name} {item.teacher.surname}</td>
-        <td className="hidden text-center xl:table-cell">{new Intl.DateTimeFormat('en-US').format(item.startTime)}</td>
+        <td className="hidden text-center xl:table-cell">
+            {(() => {
+                const startDate = new Date(item.startTime);
+                const endDate = new Date(item.endTime);
+
+                const day = String(startDate.getUTCDate()).padStart(2, '0');
+                const month = String(startDate.getUTCMonth() + 1).padStart(2, '0');
+                const year = startDate.getUTCFullYear();
+
+                const startHour = String(startDate.getUTCHours()).padStart(2, '0');
+                const startMinute = String(startDate.getUTCMinutes()).padStart(2, '0');
+
+                return `${day}/${month}/${year} - ${startHour}:${startMinute}`;
+            })()}
+        </td>
         <td>
             <div className="flex items-center justify-center gap-2">
                 {(role === "admin" || role === "teacher") && (
                     <>
-                        <FormModal table="exam" type="update" data={item} />
-                        <FormModal table="exam" type="delete" id={item.id} />
+                        <FormContainer table="exam" type="update" data={item} />
+                        <FormContainer table="exam" type="delete" id={item.id} />
                     </>
                 )}
             </div>
@@ -163,7 +177,7 @@ const ExamListPage = async ({ searchParams }: { searchParams: Record<string, str
                         <button className="w-8 h-8 flex items-center justify-center rounded-full bg-sky">
                             <Image src="/sort.png" alt="" width={14} height={14} />
                         </button>
-                        {(role === "admin" || role === "teacher") && <FormModal table="exam" type="create" />}
+                        {(role === "admin" || role === "teacher") && <FormContainer table="exam" type="create" />}
                     </div>
                 </div>
             </div>

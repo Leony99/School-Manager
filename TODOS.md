@@ -1,3 +1,5 @@
+## To do
+
 - Home
     - Admin
         - Make use of finance chart element
@@ -12,5 +14,6 @@
 
 - Error treatment for unique fields in database
 
-- Bugs
+##  Bugs
     - Empty screen on logout
+    - Problems with UTC time

@@ -8,7 +8,7 @@ import { Prisma, Lesson, Subject, Class, Teacher } from "@prisma/client";
 import TableSearch from "@/components/lists/TableSearch";
 import Table from "@/components/lists/Table";
 import Pagination from "@/components/lists/Pagination";
-import FormModal from "@/components/lists/FormModal";
+import FormContainer from "@/components/lists/FormContainer";
 
 type LessonType = Lesson & { subject: Subject } & { class: Class } & { teacher: Teacher };
 
@@ -48,8 +48,8 @@ const renderRow = (item: LessonType) => (
             <div className="flex items-center justify-center gap-2">
                 {(role === "admin" || role === "teacher") && (
                     <>
-                        <FormModal table="lesson" type="update" data={item} />
-                        <FormModal table="lesson" type="delete" id={item.id} />
+                        <FormContainer table="lesson" type="update" data={item} />
+                        <FormContainer table="lesson" type="delete" id={item.id} />
                     </>
                 )}
             </div>
@@ -157,7 +157,7 @@ const LessonListPage = async ({ searchParams }: { searchParams: Record<string, s
                         <button className="w-8 h-8 flex items-center justify-center rounded-full bg-sky">
                             <Image src="/sort.png" alt="" width={14} height={14} />
                         </button>
-                        {(role === "admin" || role === "teacher") && <FormModal table="lesson" type="create" />}
+                        {(role === "admin" || role === "teacher") && <FormContainer table="lesson" type="create" />}
                     </div>
                 </div>
             </div>

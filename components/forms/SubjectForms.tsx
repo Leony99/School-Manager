@@ -2,7 +2,8 @@
 
 import { Dispatch, SetStateAction, startTransition, useActionState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { subjectSchema, SubjectSchemaType, createSubject, updateSubject } from "@/lib/formActions/subject";
+import { subjectSchema, SubjectSchemaType } from "@/lib/formSchemas/subject";
+import { createSubject, updateSubject } from "@/lib/formActions/subject";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputField from "./forms_components/InputField";
 import { toast } from "react-toastify";
@@ -36,7 +37,6 @@ const SubjectForm = ({
     );
 
     const onSubmit = handleSubmit((data) => {
-        console.log(data);
         startTransition(() => formAction(data));
     });
 
@@ -81,7 +81,7 @@ const SubjectForm = ({
                         multiple
                         className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
                         {...register("teachers")}
-                        defaultValue={data?.teachers}
+                        defaultValue={data?.teachers?.map((teacher: { id: string }) => teacher.id) || []}
                     >
                         {teachers.map(
                             (teacher: { id: string; name: string; surname: string }) => (

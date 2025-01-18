@@ -130,7 +130,7 @@ const ParentForm = ({
                         multiple
                         className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
                         {...register("students")}
-                        defaultValue={data?.students}
+                        defaultValue={data?.students?.map((student: { id: string }) => student.id) || []}
                     >
                         {students.map((student: { id: string; name: string; surname: string }) => (
                             <option value={student.id} key={student.id}>

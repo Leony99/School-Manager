@@ -130,7 +130,7 @@ const ParentListPage = async ({ searchParams }: { searchParams: Record<string, s
     const data = await prisma.parent.findMany({
         where: query,
         include: {
-            students: { select: {name: true, surname: true} },
+            students: { select: { id: true, name: true, surname: true } },
         },
         take: ITEM_PER_PAGE,
         skip: (page - 1) * ITEM_PER_PAGE,

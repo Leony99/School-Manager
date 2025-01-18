@@ -1,25 +1,17 @@
 "use server";
 
-import { SubjectSchemaType } from "@/lib/formSchemas/subject";
+import { lessonSchemaType } from "@/lib/formSchemas/lesson";
 import prisma from "../prisma";
 
-//Form actions
 type CurrentState = { success: boolean; error: boolean };
 
-export const createSubject = async (
+export const createLesson = async (
     currentState: CurrentState,
-    data: SubjectSchemaType
+    data: lessonSchemaType
 ) => {
     try {
-        await prisma.subject.create({
-            data: {
-                name: data.name,
-                teachers: data.teachers && data.teachers.length > 0 
-                    ? {
-                          connect: data.teachers.map((teacherId) => ({ id: teacherId })),
-                      }
-                    : undefined,
-            },
+        await prisma.lesson.create({
+            data,
         });
 
         return { success: true, error: false };
@@ -28,21 +20,16 @@ export const createSubject = async (
     }
 };
 
-export const updateSubject = async (
+export const updateLesson = async (
     currentState: CurrentState,
-    data: SubjectSchemaType
+    data: lessonSchemaType
 ) => {
     try {
-        await prisma.subject.update({
+        await prisma.lesson.update({
             where: {
                 id: data.id,
             },
-            data: {
-                name: data.name,
-                teachers: {
-                    set: data.teachers?.map((teacherId) => ({ id: teacherId })),
-                },
-            },
+            data,
         });
 
         return { success: true, error: false };
@@ -51,13 +38,13 @@ export const updateSubject = async (
     }
 };
 
-export const deleteSubject = async (
+export const deleteLesson = async (
     currentState: CurrentState,
     data: FormData
 ) => {
     const id = data.get("id") as string;
     try {
-        await prisma.subject.delete({
+        await prisma.lesson.delete({
             where: {
                 id: parseInt(id),
             },

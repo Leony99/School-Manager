@@ -1,25 +1,20 @@
 "use server";
 
-import { SubjectSchemaType } from "@/lib/formSchemas/subject";
+import { eventSchemaType } from "@/lib/formSchemas/event";
 import prisma from "../prisma";
 
-//Form actions
 type CurrentState = { success: boolean; error: boolean };
 
-export const createSubject = async (
+export const createEvent = async (
     currentState: CurrentState,
-    data: SubjectSchemaType
+    data: eventSchemaType
 ) => {
     try {
-        await prisma.subject.create({
+        await prisma.event.create({
             data: {
-                name: data.name,
-                teachers: data.teachers && data.teachers.length > 0 
-                    ? {
-                          connect: data.teachers.map((teacherId) => ({ id: teacherId })),
-                      }
-                    : undefined,
-            },
+                ...data,
+                classId: data.classId ? data.classId : null,
+            }
         });
 
         return { success: true, error: false };
@@ -28,21 +23,16 @@ export const createSubject = async (
     }
 };
 
-export const updateSubject = async (
+export const updateEvent = async (
     currentState: CurrentState,
-    data: SubjectSchemaType
+    data: eventSchemaType
 ) => {
     try {
-        await prisma.subject.update({
+        await prisma.event.update({
             where: {
                 id: data.id,
             },
-            data: {
-                name: data.name,
-                teachers: {
-                    set: data.teachers?.map((teacherId) => ({ id: teacherId })),
-                },
-            },
+            data,
         });
 
         return { success: true, error: false };
@@ -51,13 +41,13 @@ export const updateSubject = async (
     }
 };
 
-export const deleteSubject = async (
+export const deleteEvent = async (
     currentState: CurrentState,
     data: FormData
 ) => {
     const id = data.get("id") as string;
     try {
-        await prisma.subject.delete({
+        await prisma.event.delete({
             where: {
                 id: parseInt(id),
             },

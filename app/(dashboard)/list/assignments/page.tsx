@@ -8,7 +8,7 @@ import { Prisma, Assignment, Subject, Class, Teacher } from "@prisma/client";
 import TableSearch from "@/components/lists/TableSearch";
 import Table from "@/components/lists/Table";
 import Pagination from "@/components/lists/Pagination";
-import FormModal from "@/components/lists/FormModal";
+import FormContainer from "@/components/lists/FormContainer";
 
 type AssignmentType = Assignment & { subject: Subject } & { class: Class } & { teacher: Teacher };
 
@@ -54,13 +54,21 @@ const renderRow = (item: AssignmentType) => (
         <td className="hidden text-center sm:table-cell">{item.subject.name}</td>
         <td className="hidden text-center md:table-cell">{item.class.name}</td>
         <td className="hidden text-center xl:table-cell">{item.teacher.name} {item.teacher.surname}</td>
-        <td className="hidden text-center xl:table-cell">{new Intl.DateTimeFormat('en-US').format(item.dueDate)}</td>
+        <td className="hidden text-center xl:table-cell">
+            {(() => {
+                const date = new Date(item.dueDate);
+                const day = String(date.getUTCDate()).padStart(2, '0');
+                const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+                const year = date.getUTCFullYear();
+                return `${day}/${month}/${year}`;
+            })()}
+        </td>
         <td>
             <div className="flex items-center justify-center gap-2">
                 {(role === "admin" || role === "teacher") && (
                     <>
-                        <FormModal table="assignment" type="update" data={item} />
-                        <FormModal table="assignment" type="delete" id={item.id} />
+                        <FormContainer table="assignment" type="update" data={item} />
+                        <FormContainer table="assignment" type="delete" id={item.id} />
                     </>
                 )}
             </div>
@@ -165,7 +173,7 @@ const AssignmentListPage = async ({ searchParams }: { searchParams: Record<strin
                         <button className="w-8 h-8 flex items-center justify-center rounded-full bg-sky">
                             <Image src="/sort.png" alt="" width={14} height={14} />
                         </button>
-                        {(role === "admin" || role === "teacher") && <FormModal table="assignment" type="create" />}
+                        {(role === "admin" || role === "teacher") && <FormContainer table="assignment" type="create" />}
                     </div>
                 </div>
             </div>

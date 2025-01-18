@@ -12,6 +12,12 @@ import { deleteParent } from "@/lib/formActions/parent";
 import { deleteTeacher } from "@/lib/formActions/teacher";
 import { deleteClass } from "@/lib/formActions/class";
 import { deleteSubject } from "@/lib/formActions/subject";
+import { deleteLesson } from "@/lib/formActions/lesson";
+import { deleteAssignment } from "@/lib/formActions/assignment";
+import { deleteExam } from "@/lib/formActions/exam";
+import { deleteResult } from "@/lib/formActions/result";
+import { deleteEvent } from "@/lib/formActions/event";
+import { deleteAnnouncement } from "@/lib/formActions/announcement";
 
 const deleteActionMap = {
     student: deleteStudent,
@@ -19,13 +25,12 @@ const deleteActionMap = {
     teacher: deleteTeacher,
     class: deleteClass,
     subject: deleteSubject,
-    // TODO: OTHER DELETE ACTIONS
-    lesson: deleteSubject,
-    assignment: deleteSubject,
-    exam: deleteSubject,
-    result: deleteSubject,
-    event: deleteSubject,
-    announcement: deleteSubject,
+    lesson: deleteLesson,
+    assignment: deleteAssignment,
+    exam: deleteExam,
+    result: deleteResult,
+    event: deleteEvent,
+    announcement: deleteAnnouncement,
 };
 
 const TeacherForm = dynamic(() => import("../forms/TeacherForms"), {

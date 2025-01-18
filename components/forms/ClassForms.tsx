@@ -2,7 +2,8 @@
 
 import { Dispatch, SetStateAction, startTransition, useActionState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { classSchema, ClassSchemaType, createClass, updateClass } from "@/lib/formActions/class";
+import { classSchema, ClassSchemaType } from "@/lib/formSchemas/class";
+import { createClass, updateClass } from "@/lib/formActions/class";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputField from "./forms_components/InputField";
 import { toast } from "react-toastify";
@@ -36,7 +37,6 @@ const ClassForm = ({
     );
 
     const onSubmit = handleSubmit((data) => {
-        console.log(data);
         startTransition(() => formAction(data));
     });
 
@@ -94,7 +94,7 @@ const ClassForm = ({
                                 <option
                                     value={teacher.id}
                                     key={teacher.id}
-                                    selected={data && teacher.id === data.supervisorId}
+                                    defaultValue={data && teacher.id === data.supervisorId}
                                 >
                                     {teacher.name + " " + teacher.surname}
                                 </option>
@@ -118,7 +118,7 @@ const ClassForm = ({
                             <option
                                 value={grade.id}
                                 key={grade.id}
-                                selected={data && grade.id === data.gradeId}
+                                defaultValue={data && grade.id === data.gradeId}
                             >
                                 {grade.level}
                             </option>

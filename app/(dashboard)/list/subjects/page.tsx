@@ -85,7 +85,7 @@ const SubjectListPage = async ({ searchParams }: { searchParams: Record<string, 
     const data = await prisma.subject.findMany({
         where: query,
         include: {
-            teachers: { select: { name: true, surname: true } },
+            teachers: { select: { id: true, name: true, surname: true } },
         },
         take: ITEM_PER_PAGE,
         skip: (page - 1) * ITEM_PER_PAGE,

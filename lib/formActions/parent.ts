@@ -30,11 +30,11 @@ export const createParent = async (
                 email: data.email || null,
                 phone: data.phone || null,
                 address: data.address,
-                students: {
-                    connect: data.students?.map((studentId: string) => ({
-                        id: studentId,
-                    })),
-                },
+                students: data.students && data.students.length > 0
+                    ? {
+                        connect: data.students.map((studentId) => ({ id: studentId })),
+                    }
+                    : undefined,
             },
         });
 
@@ -60,29 +60,24 @@ export const updateParent = async (
             lastName: data.surname,
         });
 
-        const updateData: any = {
-            username: data.username,
-            ...(data.password !== "" && { password: data.password }),
-            name: data.name,
-            surname: data.surname,
-            email: data.email || null,
-            phone: data.phone || null,
-            address: data.address,
-        };
-
-        if (data.students && data.students.length > 0) {
-            updateData.students = {
-                set: data.students.map((studentId: string) => ({
-                    id: studentId,
-                })),
-            };
-        }
-
         await prisma.parent.update({
             where: {
                 id: data.id,
             },
-            data: updateData,
+            data: {
+                username: data.username,
+                ...(data.password !== "" && { password: data.password }),
+                name: data.name,
+                surname: data.surname,
+                email: data.email || null,
+                phone: data.phone || null,
+                address: data.address,
+                students: {
+                    set: data.students?.map((studentId: string) => ({
+                        id: studentId,
+                    })),
+                },
+            }
         });
 
         return { success: true, error: false };

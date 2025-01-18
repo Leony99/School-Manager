@@ -1,33 +1,13 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { resultSchema, resultSchemaType } from "@/lib/formSchemas/result";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputField from "./forms_components/InputField";
-import { Dispatch, SetStateAction } from "react";
-
-const schema = z.object({
-    subject: z
-        .string()
-        .min(2, { message: "Subject name must be at least 2 characters long!" })
-        .max(30, { message: "Subject name must be at most 30 characters long!" }),
-    class: z
-        .string()
-        .min(1, { message: "Class name must be at least 1 characters long!" })
-        .max(10, { message: "Class name must be at most 10 characters long!" }),
-    teacher: z
-        .string().min(1, { message: "Teacher name is required!" }),
-    type: z
-        .enum(["exam", "assignment"], { message: "Type is required!" }),
-    date: z
-        .string().min(1, { message: "Date is required!" }),
-    score: z
-        .number()
-        .min(0, { message: "Score must be at least 0!" })
-        .max(100, { message: "Score must be at most 100!" }),
-});
-
-type Inputs = z.infer<typeof schema>;
+import { Dispatch, SetStateAction, startTransition, useActionState, useEffect } from "react";
+import { createResult, updateResult } from "@/lib/formActions/result";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 const ResultForm = ({
     setOpen,
@@ -44,70 +24,107 @@ const ResultForm = ({
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<Inputs>({
-        resolver: zodResolver(schema),
+    } = useForm<resultSchemaType>({
+        resolver: zodResolver(resultSchema),
     });
 
+    const [state, formAction] = useActionState(
+        type === "create" ? createResult : updateResult,
+        {
+            success: false,
+            error: false,
+        }
+    );
+
     const onSubmit = handleSubmit((data) => {
-        console.log(data);
+        startTransition(() => formAction(data));
     });
+
+    const router = useRouter();
+
+    useEffect(() => {
+        if (state.success) {
+            toast(`Result has been ${type === "create" ? "created" : "updated"}!`);
+            setOpen(false);
+            router.refresh();
+        }
+    }, [state, router, setOpen]);
+
+    const { exams, students } = relatedData;
 
     return (
         <form className="flex flex-col gap-8" onSubmit={onSubmit}>
             <h1 className="text-xl font-semibold">{type === "create" ? "Create a new result" : "Update a result"}</h1>
             <div className="flex justify-around flex-wrap gap-4">
-                <InputField
-                    label="Subject name"
-                    name="name"
-                    defaultValue={data?.subject}
-                    register={register}
-                    error={errors?.subject}
-                />
-                <InputField
-                    label="Class"
-                    name="class"
-                    defaultValue={data?.class}
-                    register={register}
-                    error={errors?.class}
-                />
-                <InputField
-                    label="Teacher"
-                    name="teacher"
-                    defaultValue={data?.teacher}
-                    register={register}
-                    error={errors?.teacher}
-                />
                 <div className="flex flex-col gap-2 w-full md:w-1/4">
-                    <label className="text-xs text-gray-500">Type</label>
+                    <label className="text-xs text-gray-500">Exam</label>
                     <select
                         className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
-                        {...register("type")}
-                        defaultValue={data?.sex}
+                        {...register("examId")}
+                        defaultValue={data?.exams}
                     >
-                        <option value="exam">Exam</option>
-                        <option value="assignment">Assignment</option>
+                        {exams.map(
+                            (exam: { id: string; title: string }) => (
+                                <option
+                                    value={exam.id}
+                                    key={exam.id}
+                                    defaultValue={data && exam.id === data.subjectId}
+                                >
+                                    {exam.title}
+                                </option>
+                            )
+                        )}
                     </select>
-                    {errors.type?.message && (
+                    {errors.examId?.message && (
                         <p className="text-xs text-red-400">
-                            {errors.type.message.toString()}
+                            {errors.examId.message.toString()}
                         </p>
                     )}
                 </div>
-                <InputField
-                    label="Date"
-                    name="date"
-                    defaultValue={data?.date}
-                    register={register}
-                    error={errors?.date}
-                />
+                <div className="flex flex-col gap-2 w-full md:w-1/4">
+                    <label className="text-xs text-gray-500">Student</label>
+                    <select
+                        className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
+                        {...register("studentId")}
+                        defaultValue={data?.students}
+                    >
+                        {students.map(
+                            (student: { id: string; name: string; surname: string }) => (
+                                <option
+                                    value={student.id}
+                                    key={student.id}
+                                    defaultValue={data && student.id === data.student}
+                                >
+                                    {student.name} {student.surname}
+                                </option>
+                            )
+                        )}
+                    </select>
+                    {errors.studentId?.message && (
+                        <p className="text-xs text-red-400">
+                            {errors.studentId.message.toString()}
+                        </p>
+                    )}
+                </div>
+
                 <InputField
                     label="Score"
                     name="score"
-                    type="number"
                     defaultValue={data?.score}
                     register={register}
                     error={errors?.score}
+                    type="number"
                 />
+                {data && (
+                    <InputField
+                        label="Id"
+                        name="id"
+                        defaultValue={data?.id}
+                        register={register}
+                        error={errors?.id}
+                        hidden
+                    />
+                )}
             </div>
             <button className="bg-blue-400 text-white p-2 rounded-md">
                 {type === "create" ? "Create" : "Update"}
