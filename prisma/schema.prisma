@@ -31,6 +31,8 @@ model Admin {
   id       String @id @default(uuid())
   username String @unique
   password String
+  name     String
+  surname  String
 }
 
 model Student {
@@ -179,10 +181,10 @@ model Result {
   id    Int @id @default(autoincrement())
   score Int
 
-  examId       Int
-  exam         Exam       @relation(fields: [examId], references: [id])
-  studentId    String
-  student      Student     @relation(fields: [studentId], references: [id])
+  examId    Int
+  exam      Exam    @relation(fields: [examId], references: [id])
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
 }
 
 model Event {

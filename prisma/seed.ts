@@ -5,12 +5,22 @@ const prisma = new PrismaClient();
 
 async function main() {
   const client = await clerkClient();
-  await client.users.createUser({
+  const admin = await client.users.createUser({
       username: 'admin',
-      password: 'admin',
+      password: '12345678',
       firstName: 'admin',
       lastName: 'example',
       publicMetadata: { role: "admin" }
+  });
+
+  await prisma.admin.create({
+    data: {
+      id: admin.id,
+      username: 'admin',
+      password: '12345678',
+      name: 'admin',
+      surname: 'example',
+    },
   });
 
   await prisma.grade.createMany({
