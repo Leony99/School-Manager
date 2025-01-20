@@ -10,9 +10,21 @@ export const createEvent = async (
     data: eventSchemaType
 ) => {
     try {
+        const startTime = new Date(data.startTime);
+        const endTime = new Date(data.endTime);
+
+        const startTimeLocal = new Date(
+            startTime.getTime() - startTime.getTimezoneOffset() * 60000
+        );
+        const endTimeLocal = new Date(
+            endTime.getTime() - endTime.getTimezoneOffset() * 60000
+        );
+
         await prisma.event.create({
             data: {
                 ...data,
+                startTime: startTimeLocal,
+                endTime: endTimeLocal,
                 classId: data.classId ? data.classId : null,
             }
         });
@@ -27,12 +39,27 @@ export const updateEvent = async (
     currentState: CurrentState,
     data: eventSchemaType
 ) => {
+    const startTime = new Date(data.startTime);
+    const endTime = new Date(data.endTime);
+
+    const startTimeLocal = new Date(
+        startTime.getTime() - startTime.getTimezoneOffset() * 60000
+    );
+    const endTimeLocal = new Date(
+        endTime.getTime() - endTime.getTimezoneOffset() * 60000
+    );
+
     try {
         await prisma.event.update({
             where: {
                 id: data.id,
             },
-            data,
+            data: {
+                ...data,
+                startTime: startTimeLocal,
+                endTime: endTimeLocal,
+                classId: data.classId ? data.classId : null,
+            }
         });
 
         return { success: true, error: false };

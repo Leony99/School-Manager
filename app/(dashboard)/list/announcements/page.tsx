@@ -52,7 +52,9 @@ const renderRow = (item: AnnouncementType) => (
         </td>
         <td className="hidden text-center xl:table-cell">{item.class?.name || "N/A"}</td>
         <td className="hidden text-center md:table-cell">
-            {new Intl.DateTimeFormat("en-US").format(item.date)}
+            {new Intl.DateTimeFormat("pt-BR",
+                {timeZone: "UTC"}
+            ).format(item.date)}
         </td>
         <td>
             <div className="flex items-center justify-center gap-2">

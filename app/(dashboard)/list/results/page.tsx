@@ -80,8 +80,10 @@ const renderRow = (item: ResultType) => (
         </td>
         <td className="hidden text-center xl:table-cell">
             {item.exam?.startTime
-                    ? new Intl.DateTimeFormat('en-US').format(new Date(item.exam.startTime))
-                    : "N/A"}
+                ? new Intl.DateTimeFormat('pt-br'
+                    , { timeZone: "UTC" }
+                ).format(new Date(item.exam.startTime))
+                : "N/A"}
         </td>
         <td>
             <div className="flex items-center justify-center gap-2">

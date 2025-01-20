@@ -52,16 +52,20 @@ const renderRow = (item: EventType) => (
     >
         <td className="flex items-center gap-4 p-4">{item.title}</td>
         <td className="hidden text-center sm:table-cell">{item.class?.name || "N/A"}</td>
-        <td className="hidden text-center md:table-cell">{new Intl.DateTimeFormat('en-US').format(item.startTime)}</td>
-        <td className="hidden text-center lg:table-cell">{new Intl.DateTimeFormat('en-US', {
+        <td className="hidden text-center md:table-cell">{new Intl.DateTimeFormat("pt-BR", {
+            timeZone: "UTC"
+        }
+        ).format(item.startTime)}
+        </td>
+        <td className="hidden text-center lg:table-cell">{new Intl.DateTimeFormat("pt-BR", {
+            timeZone: "UTC",
             hour: '2-digit',
             minute: '2-digit',
-            timeZone: 'UTC',
         }).format(item.startTime)}</td>
-        <td className="hidden text-center xl:table-cell">{new Intl.DateTimeFormat('en-US', {
+        <td className="hidden text-center xl:table-cell">{new Intl.DateTimeFormat("pt-BR", {
+            timeZone: "UTC",
             hour: '2-digit',
             minute: '2-digit',
-            timeZone: 'UTC',
         }).format(item.endTime)}</td>
         <td>
             <div className="flex items-center justify-center gap-2">

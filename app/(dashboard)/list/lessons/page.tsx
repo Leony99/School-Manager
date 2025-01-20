@@ -28,6 +28,11 @@ const columns = [
         className: "hidden md:table-cell",
     },
     {
+        header: "Date",
+        accessor: "date",
+        className: "hidden xl:table-cell",
+    },
+    {
         header: "Actions",
         accessor: "action",
         className: (role === "admin" || role === "teacher") ? "" : "hidden",
@@ -43,6 +48,17 @@ const renderRow = (item: LessonType) => (
         <td className="text-center" >{item.class.name}</td>
         <td className="hidden text-center md:table-cell">
             {item.teacher.name} {item.teacher.surname}
+        </td>
+        <td className="hidden text-center xl:table-cell">
+            {new Intl.DateTimeFormat("pt-BR", {
+                timeZone: "UTC",
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+            ).format(item.startTime)}
         </td>
         <td>
             <div className="flex items-center justify-center gap-2">

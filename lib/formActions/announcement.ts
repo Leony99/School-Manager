@@ -27,12 +27,16 @@ export const updateAnnouncement = async (
     currentState: CurrentState,
     data: announcementSchemaType
 ) => {
+    console.log(data)
     try {
         await prisma.announcement.update({
             where: {
                 id: data.id,
             },
-            data,
+            data: {
+                ...data,
+                classId: data.classId ? data.classId : null,
+            }
         });
 
         return { success: true, error: false };

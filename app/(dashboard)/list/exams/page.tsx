@@ -55,19 +55,15 @@ const renderRow = (item: ExamType) => (
         <td className="hidden text-center md:table-cell">{item.class.name}</td>
         <td className="hidden text-center xl:table-cell">{item.teacher.name} {item.teacher.surname}</td>
         <td className="hidden text-center xl:table-cell">
-            {(() => {
-                const startDate = new Date(item.startTime);
-                const endDate = new Date(item.endTime);
-
-                const day = String(startDate.getUTCDate()).padStart(2, '0');
-                const month = String(startDate.getUTCMonth() + 1).padStart(2, '0');
-                const year = startDate.getUTCFullYear();
-
-                const startHour = String(startDate.getUTCHours()).padStart(2, '0');
-                const startMinute = String(startDate.getUTCMinutes()).padStart(2, '0');
-
-                return `${day}/${month}/${year} - ${startHour}:${startMinute}`;
-            })()}
+            {new Intl.DateTimeFormat("pt-BR", {
+                timeZone: "UTC",
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+            ).format(item.startTime)}
         </td>
         <td>
             <div className="flex items-center justify-center gap-2">

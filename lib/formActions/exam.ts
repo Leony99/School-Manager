@@ -9,9 +9,23 @@ export const createExam = async (
     currentState: CurrentState,
     data: examSchemaType
 ) => {
+    const startTime = new Date(data.startTime);
+    const endTime = new Date(data.endTime);
+
+    const startTimeLocal = new Date(
+        startTime.getTime() - startTime.getTimezoneOffset() * 60000
+    );
+    const endTimeLocal = new Date(
+        endTime.getTime() - endTime.getTimezoneOffset() * 60000
+    );
+
     try {
         await prisma.exam.create({
-            data,
+            data: {
+                ...data,
+                startTime: startTimeLocal,
+                endTime: endTimeLocal
+            }
         });
 
         return { success: true, error: false };
@@ -24,12 +38,26 @@ export const updateExam = async (
     currentState: CurrentState,
     data: examSchemaType
 ) => {
+    const startTime = new Date(data.startTime);
+    const endTime = new Date(data.endTime);
+
+    const startTimeLocal = new Date(
+        startTime.getTime() - startTime.getTimezoneOffset() * 60000
+    );
+    const endTimeLocal = new Date(
+        endTime.getTime() - endTime.getTimezoneOffset() * 60000
+    );
+
     try {
         await prisma.exam.update({
             where: {
                 id: data.id,
             },
-            data,
+            data: {
+                ...data,
+                startTime: startTimeLocal,
+                endTime: endTimeLocal
+            }
         });
 
         return { success: true, error: false };

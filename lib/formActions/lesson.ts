@@ -9,9 +9,23 @@ export const createLesson = async (
     currentState: CurrentState,
     data: lessonSchemaType
 ) => {
+    const startTime = new Date(data.startTime);
+    const endTime = new Date(data.endTime);
+
+    const startTimeLocal = new Date(
+        startTime.getTime() - startTime.getTimezoneOffset() * 60000
+    );
+    const endTimeLocal = new Date(
+        endTime.getTime() - endTime.getTimezoneOffset() * 60000
+    );
+
     try {
         await prisma.lesson.create({
-            data,
+            data: {
+                ...data,
+                startTime: startTimeLocal,
+                endTime: endTimeLocal,
+            }
         });
 
         return { success: true, error: false };
@@ -24,12 +38,26 @@ export const updateLesson = async (
     currentState: CurrentState,
     data: lessonSchemaType
 ) => {
+    const startTime = new Date(data.startTime);
+    const endTime = new Date(data.endTime);
+
+    const startTimeLocal = new Date(
+        startTime.getTime() - startTime.getTimezoneOffset() * 60000
+    );
+    const endTimeLocal = new Date(
+        endTime.getTime() - endTime.getTimezoneOffset() * 60000
+    );
+
     try {
         await prisma.lesson.update({
             where: {
                 id: data.id,
             },
-            data,
+            data: {
+                ...data,
+                startTime: startTimeLocal,
+                endTime: endTimeLocal,
+            }
         });
 
         return { success: true, error: false };

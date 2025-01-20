@@ -55,13 +55,10 @@ const renderRow = (item: AssignmentType) => (
         <td className="hidden text-center md:table-cell">{item.class.name}</td>
         <td className="hidden text-center xl:table-cell">{item.teacher.name} {item.teacher.surname}</td>
         <td className="hidden text-center xl:table-cell">
-            {(() => {
-                const date = new Date(item.dueDate);
-                const day = String(date.getUTCDate()).padStart(2, '0');
-                const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-                const year = date.getUTCFullYear();
-                return `${day}/${month}/${year}`;
-            })()}
+            {new Intl.DateTimeFormat("pt-BR", {
+                timeZone: "UTC",
+            }
+            ).format(item.dueDate)}
         </td>
         <td>
             <div className="flex items-center justify-center gap-2">
