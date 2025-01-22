@@ -108,7 +108,7 @@ npm run dev
 
 The following is the typical folder and file structure for the project:
 
-![Folder structure](/School%20Manager/folder%20structure.png)
+![Folder structure](folder-structure.png)
 
 ## Bugs and to do
 
