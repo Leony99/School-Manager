@@ -7,7 +7,7 @@ In this documentation, we will explore a web application developed with Next.js,
 1. [Technologies Used](#technologies-used)
 2. [How to setup as development](#setup-as-development)
 3. [Folder and File Structure](#folder-and-file-structure)
-4. [Bugs](#bugs)
+4. [Bugs](#bugs-and-to-do)
 
 ## Technologies Used
 
