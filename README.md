@@ -5,7 +5,7 @@ In this documentation, we will explore a web application developed with Next.js,
 ## Table of Contents
 
 1. [Technologies Used](#technologies-used)
-2. [How to setup and run](#setup-and-installation)
+2. [How to setup as development](#setup-as-development)
 3. [Folder and File Structure](#folder-and-file-structure)
 4. [Bugs](#bugs)
 
@@ -16,7 +16,7 @@ In this documentation, we will explore a web application developed with Next.js,
 - **[Prisma with PostgreSQL](https://www.prisma.io/):** A next-generation ORM (Object-Relational Mapping) tool for database management.  
 - **[Clerk](https://clerk.dev/):** A user management and authentication platform.
 
-## Setup and Run
+## Setup as development
 
 OBS: An admin user will be created automatically after run the prisma seed, with the username "admin" and the password "admin".
 
